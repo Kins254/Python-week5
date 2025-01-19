@@ -1,5 +1,7 @@
 from typing import List, Optional
 from datetime import datetime
+from abc import ABC, abstractmethod
+from typing import List, Optional
 
 class Power:
     def __init__(self, name: str, description: str, power_level: int):
@@ -122,3 +124,137 @@ if __name__ == "__main__":
     print(professor_x.lead_mission("Save the City"))  
     
     print(superman.rest())  
+    
+    
+    
+    #Activity 2
+  
+
+class Vehicle(ABC):
+    def __init__(self, name: str, max_speed: float):
+        self.name = name
+        self.max_speed = max_speed
+        self.current_speed = 0
+        self.is_moving = False
+    
+    @abstractmethod
+    def move(self) -> str:
+        """Define how the vehicle moves."""
+        pass
+    
+    @abstractmethod
+    def stop(self) -> str:
+        """Define how the vehicle stops."""
+        pass
+    
+    def accelerate(self, speed_increase: float) -> str:
+        """Increase the vehicle's speed."""
+        if self.current_speed + speed_increase <= self.max_speed:
+            self.current_speed += speed_increase
+            return f"{self.name} accelerated to {self.current_speed} km/h"
+        return f"{self.name} cannot go faster than {self.max_speed} km/h"
+
+class Car(Vehicle):
+    def __init__(self, name: str, max_speed: float, fuel_type: str):
+        super().__init__(name, max_speed)
+        self.fuel_type = fuel_type
+        self.engine_started = False
+    
+    def start_engine(self) -> str:
+        """Start the car's engine."""
+        self.engine_started = True
+        return f"{self.name}'s engine roars to life! "
+    
+    def move(self) -> str:
+        if not self.engine_started:
+            return f"Cannot drive {self.name}: Engine is not started!"
+        self.is_moving = True
+        return f"{self.name} is cruising down the road "
+    
+    def stop(self) -> str:
+        self.is_moving = False
+        self.current_speed = 0
+        return f"{self.name} comes to a smooth stop "
+
+class Plane(Vehicle):
+    def __init__(self, name: str, max_speed: float, max_altitude: float):
+        super().__init__(name, max_speed)
+        self.max_altitude = max_altitude
+        self.current_altitude = 0
+        self.is_airborne = False
+    
+    def move(self) -> str:
+        if not self.is_airborne:
+            return self.take_off()
+        return f"{self.name} is soaring through the clouds "
+    
+    def take_off(self) -> str:
+        """Initiate takeoff sequence."""
+        self.is_moving = True
+        self.is_airborne = True
+        return f"{self.name} takes off into the sky! "
+    
+    def land(self) -> str:
+        """Land the plane."""
+        self.is_airborne = False
+        return f"{self.name} touches down on the runway "
+    
+    def stop(self) -> str:
+        if self.is_airborne:
+            return "Cannot stop while airborne!"
+        self.is_moving = False
+        self.current_speed = 0
+        return f"{self.name} has come to a complete stop on the runway"
+
+class Boat(Vehicle):
+    def __init__(self, name: str, max_speed: float, boat_type: str):
+        super().__init__(name, max_speed)
+        self.boat_type = boat_type
+        self.anchor_dropped = True
+    
+    def raise_anchor(self) -> str:
+        """Raise the boat's anchor."""
+        self.anchor_dropped = False
+        return f"{self.name}'s anchor is up! "
+    
+    def drop_anchor(self) -> str:
+        """Drop the boat's anchor."""
+        self.anchor_dropped = True
+        return f"{self.name}'s anchor has been dropped "
+    
+    def move(self) -> str:
+        if self.anchor_dropped:
+            return f"Cannot sail {self.name}: Anchor is still dropped!"
+        self.is_moving = True
+        return f"{self.name} is sailing across the waves "
+    
+    def stop(self) -> str:
+        self.is_moving = False
+        self.current_speed = 0
+        return f"{self.name} glides to a stop on the water"
+
+# Example usage
+if __name__ == "__main__":
+    # Creating vehicles
+    tesla = Car("Tesla Model S", 250, "Electric")
+    boeing = Plane("Boeing 747", 900, 13000)
+    yacht = Boat("Luxury Yacht", 70, "Motor Yacht")
+    
+    # Demonstrating different movement behaviors
+    print("\nCar Demo:")
+    print(tesla.start_engine())
+    print(tesla.move())
+    print(tesla.accelerate(50))
+    print(tesla.stop())
+    
+    print("\nPlane Demo:")
+    print(boeing.move()) 
+    print(boeing.accelerate(300))
+    print(boeing.land())
+    print(boeing.stop())
+    
+    print("\nBoat Demo:")
+    print(yacht.move()) 
+    print(yacht.raise_anchor())
+    print(yacht.move())
+    print(yacht.drop_anchor())
